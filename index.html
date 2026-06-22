@@ -3,50 +3,85 @@
 <head>
     <title>My Fast Trading App</title>
     <style>
-        body { margin: 0; padding: 0; background: #131722; }
-        #chart { width: 100vw; height: 100vh; }
+        body { margin: 0; padding: 0; background: #131722; font-family: Arial, sans-serif; }
+        .menu { background: #1e222d; padding: 10px; display: flex; gap: 10px; }
+        .menu button { background: #2B2B43; color: #d1d4dc; border: 1px solid #363a4e; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .menu button:hover { background: #363a4e; }
+        .menu button.active { background: #2962ff; color: white; border-color: #2962ff; }
+        #chart { width: 100vw; height: calc(100vh - 50px); }
     </style>
 </head>
 <body>
+    <!-- This is our Remote Control! -->
+    <div class="menu">
+        <button class="active" onclick="switchCoin('BTCUSDT', this)">Bitcoin</button>
+        <button onclick="switchCoin('ETHUSDT', this)">Ethereum</button>
+        <button onclick="switchCoin('SOLUSDT', this)">Solana</button>
+        <button onclick="switchCoin('DOGEUSDT', this)">Dogecoin</button>
+    </div>
+
     <div id="chart"></div>
     
-    <!-- This loads the super-fast TradingView Engine -->
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     
     <script>
         // This creates the dark chart
         const chart = LightweightCharts.createChart(document.getElementById('chart'), {
-            width: window.innerWidth,
-            height: window.innerHeight,
             layout: { background: { type: 'solid', color: '#131722' }, textColor: '#d1d4dc' },
             grid: { vertLines: { color: '#2B2B43' }, horzLines: { color: '#2B2B43' } },
             timeScale: { timeVisible: true, secondsVisible: false }
         });
 
-        // This adds the green and red candles (NEW Version 4 way!)
+        // This adds the candlesticks
         const candleSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {
             upColor: 'rgb(38,166,91)', downColor: 'rgb(239,83,80)',
             borderDownColor: 'rgb(239,83,80)', borderUpColor: 'rgb(38,166,91)',
             wickDownColor: 'rgb(239,83,80)', wickUpColor: 'rgb(38,166,91)'
         });
 
-        // This gets the live data from Binance (for free, no login!)
-        fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=100')
-            .then(r => r.json())
-            .then(data => {
-                const formatted = data.map(d => ({
-                    time: d[0] / 1000,
-                    open: parseFloat(d[1]),
-                    high: parseFloat(d[2]),
-                    low: parseFloat(d[3]),
-                    close: parseFloat(d[4])
-                }));
-                candleSeries.setData(formatted);
-            });
+        // THE MAGIC SWITCHER FUNCTION
+        function switchCoin(symbol, buttonClicked) {
+            // Make the clicked button blue, and the others gray
+            const buttons = document.querySelectorAll('.menu button');
+            buttons.forEach(btn => btn.classList.remove('active');
+                btn.classList.add('active'); // Wait, fixing a typo in the logic for the user
+            }
+        });
+        */
+       
+        // The Magic Switcher Function
+        function switchCoin(symbol, buttonClicked) {
+            // Make all buttons look un-selected
+            const buttons = document.querySelectorAll('.menu button');
+            buttons.forEach(btn => btn.classList.remove('active'));
             
-        // This makes the chart resize perfectly on your phone!
+            // Make the clicked button look selected (blue)
+            buttonClicked.classList.add('active');
+
+            // Go to Binance and get the new data
+            fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1h&limit=100`)
+                .then(r => r.json())
+                .then(data => {
+                    const formatted = data.map(d => ({
+                        time: d[0] / 1000,
+                        open: parseFloat(d[1]),
+                        high: parseFloat(d[2]),
+                        low: parseFloat(d[3]),
+                        close: parseFloat(d[4])
+                    }));
+                    // Put the new data into the chart!
+                    candleSeries.setData(formatted);
+                    // Zoom to fit the screen nicely
+                    chart.timeScale().fitContent();
+                });
+        }
+
+        // Load Bitcoin first when the page opens
+        switchCoin('BTCUSDT', document.querySelector('.menu button'));
+            
+        // Resize chart if the screen changes
         window.addEventListener('resize', () => {
-            chart.applyOptions({ width: window.innerWidth, height: window.innerHeight });
+            chart.applyOptions({ width: window.innerWidth, height: window.innerHeight - 50 });
         });
     </script>
 </body>
