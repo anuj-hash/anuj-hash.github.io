@@ -1,29 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Full Ludo Game</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pro Ludo Mobile</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1 class="title">🎲 FULL LUDO GAME</h1>
+<div class="top">
+  <h1>🎲 PRO LUDO</h1>
 
-<div class="game">
-
-<div class="info">
-<button onclick="rollDice()">Roll Dice</button>
-<h2 id="dice">🎲</h2>
-<h3 id="turn">Turn: Red</h3>
+  <div class="panel">
+    <button onclick="rollDice()">Roll Dice</button>
+    <div id="dice">0</div>
+    <div id="turn">Turn: Red</div>
+  </div>
 </div>
 
 <div id="board" class="board"></div>
 
-</div>
-
 <script src="script.js"></script>
-
 </body>
 </html>
