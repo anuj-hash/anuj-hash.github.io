@@ -1,52 +1,94 @@
-const board = document.getElementById("board");
+import { db } from "./firebase-config.js";
+import {
+  ref,
+  set,
+  get,
+  onValue,
+  update
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// build board (15x15 = 225 cells)
-for (let i = 0; i < 225; i++) {
-  const cell = document.createElement("div");
-  cell.className = "cell";
-  board.appendChild(cell);
-}
+let roomId = "";
+let playerName = "";
 
-// generate room code
-function generateCode() {
+// generate room
+function generateRoom() {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
-// create room
-function createRoom() {
-  const name = document.getElementById("playerName").value;
+// CREATE ROOM
+window.createRoom = async function () {
+  playerName = document.getElementById("playerName").value;
 
-  if (!name) {
-    alert("Enter your name");
-    return;
+  if (!playerName) return alert("Enter name");
+
+  roomId = generateRoom();
+
+  await set(ref(db, "rooms/" + roomId), {
+    players: {
+      [playerName]: true
+    },
+    dice: 0,
+    turn: playerName
+  });
+
+  enterGame(roomId);
+};
+
+// JOIN ROOM
+window.joinRoom = async function () {
+  playerName = document.getElementById("playerName").value;
+  roomId = document.getElementById("roomCode").value;
+
+  if (!playerName || !roomId) {
+    return alert("Fill all fields");
   }
 
-  const room = generateCode();
-  startGame(room);
-}
+  const roomRef = ref(db, "rooms/" + roomId);
+  const snap = await get(roomRef);
 
-// join room
-function joinRoom() {
-  const room = document.getElementById("roomCode").value;
+  if (!snap.exists()) return alert("Room not found");
 
-  if (!room) {
-    alert("Enter room code");
-    return;
-  }
+  await update(roomRef, {
+    ["players/" + playerName]: true
+  });
 
-  startGame(room);
-}
+  enterGame(roomId);
+};
 
-// start game screen
-function startGame(room) {
+// ENTER GAME
+function enterGame(room) {
   document.getElementById("home").classList.add("hidden");
   document.getElementById("game").classList.remove("hidden");
 
   document.getElementById("roomText").innerText = room;
+
+  listenRoom(room);
 }
 
-// dice roll
-function rollDice() {
+// REALTIME LISTENER
+function listenRoom(room) {
+  onValue(ref(db, "rooms/" + room), (snap) => {
+    const data = snap.val();
+    if (!data) return;
+
+    document.getElementById("dice").innerText = data.dice || "🎲";
+  });
+}
+
+// ROLL DICE
+window.rollDice = async function () {
   const num = Math.floor(Math.random() * 6) + 1;
-  document.getElementById("dice").innerText = num;
+
+  await update(ref(db, "rooms/" + roomId), {
+    dice: num
+  });
+};
+
+// BUILD BOARD
+const board = document.getElementById("board");
+
+for (let i = 0; i < 225; i++) {
+  const cell = document.createElement("div");
+  cell.className = "cell";
+  board.appendChild(cell);
 }
