@@ -1,27 +1,109 @@
+
+/* =========================
+   GAME STATE
+========================= */
 const board = document.getElementById("board");
+const diceEl = document.getElementById("dice");
+const turnEl = document.getElementById("turn");
 
-/* 15x15 Ludo King style layout map */
-const layout = [
-  "red-home","red-home","red-home","red-home","red-home","","","","","","green-home","green-home","green-home","green-home","green-home",
-  "red-home","red-home","red-home","red-home","red-home","","","","","","green-home","green-home","green-home","green-home","green-home",
-  "red-home","red-home","red-home","red-home","red-home","","","","","","green-home","green-home","green-home","green-home","green-home",
-  "red-home","red-home","red-home","red-home","red-home","","path","","path","","green-home","green-home","green-home","green-home","green-home",
-  "","","","","","","path","center","path","","","","","","",
-  "","","","","","","path","center","path","","","","","","",
-  "yellow-home","yellow-home","yellow-home","yellow-home","yellow-home","","path","","path","","blue-home","blue-home","blue-home","blue-home","blue-home",
-  "yellow-home","yellow-home","yellow-home","yellow-home","yellow-home","","path","","path","","blue-home","blue-home","blue-home","blue-home","blue-home",
-  "yellow-home","yellow-home","yellow-home","yellow-home","yellow-home","","path","","path","","blue-home","blue-home","blue-home","blue-home","blue-home",
-  "yellow-home","yellow-home","yellow-home","yellow-home","yellow-home","","","","","","blue-home","blue-home","blue-home","blue-home","blue-home",
-  "","","","","","","","","","","","","","",""
-];
+const players = ["red","green","yellow","blue"];
+let turn = 0;
+let dice = 0;
 
-layout.forEach(type => {
+/* 52-step Ludo loop */
+const PATH = Array(52).fill(0);
+
+/* token positions (-1 = home) */
+let tokens = {
+  red: [-1,-1,-1,-1],
+  green: [-1,-1,-1,-1],
+  yellow: [-1,-1,-1,-1],
+  blue: [-1,-1,-1,-1]
+};
+
+/* start offsets */
+const START = {
+  red: 0,
+  green: 13,
+  yellow: 26,
+  blue: 39
+};
+
+/* =========================
+   BUILD BOARD
+========================= */
+for (let i = 0; i < 225; i++) {
   const cell = document.createElement("div");
-  cell.classList.add("cell");
+  cell.className = "cell";
+  cell.dataset.index = i;
+  board.appendChild(cell);
+}
 
-  if (type) {
-    cell.classList.add(type);
+/* =========================
+   ROLL DICE
+========================= */
+window.rollDice = function () {
+  dice = Math.floor(Math.random() * 6) + 1;
+  diceEl.innerText = dice;
+};
+
+/* =========================
+   MOVE TOKEN (mobile style tap)
+========================= */
+board.addEventListener("click", () => {
+  if (!dice) return;
+
+  const color = players[turn];
+
+  let t = tokens[color];
+
+  // find token to move
+  for (let i = 0; i < 4; i++) {
+    if (t[i] === -1) {
+      t[i] = START[color];
+      break;
+    } else {
+      t[i] += dice;
+      if (t[i] > 51) t[i] = 51;
+      break;
+    }
   }
 
-  board.appendChild(cell);
+  tokens[color] = t;
+
+  render();
+
+  nextTurn();
 });
+
+/* =========================
+   TURN SYSTEM
+========================= */
+function nextTurn() {
+  turn = (turn + 1) % players.length;
+  turnEl.innerText = "Turn: " + players[turn];
+  dice = 0;
+  diceEl.innerText = "0";
+}
+
+/* =========================
+   RENDER TOKENS
+========================= */
+function render() {
+  document.querySelectorAll(".cell").forEach(c => c.innerHTML = "");
+
+  players.forEach(color => {
+    tokens[color].forEach(pos => {
+      if (pos >= 0) {
+        const t = document.createElement("div");
+        t.className = "token " + color;
+
+        document.querySelector(`[data-index="${pos}"]`)
+        ?.appendChild(t);
+      }
+    });
+  });
+}
+
+/* first render */
+render();
