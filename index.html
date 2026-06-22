@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Fast Trading App</title>
+    <style>
+        body { margin: 0; padding: 0; background: #131722; }
+        #chart { width: 100vw; height: 100vh; }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+    
+    <!-- This loads the super-fast TradingView Engine -->
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    
+    <script>
+        // This creates the dark chart
+        const chart = LightweightCharts.createChart(document.getElementById('chart'), {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            layout: { background: { type: 'solid', color: '#131722' }, textColor: '#d1d4dc' },
+            grid: { vertLines: { color: '#2B2B43' }, horzLines: { color: '#2B2B43' } },
+            timeScale: { timeVisible: true, secondsVisible: false }
+        });
+
+        // This adds the green and red candles
+        const candleSeries = chart.addCandlestickSeries({
+            upColor: 'rgb(38,166,91)', downColor: 'rgb(239,83,80)',
+            borderDownColor: 'rgb(239,83,80)', borderUpColor: 'rgb(38,166,91)',
+            wickDownColor: 'rgb(239,83,80)', wickUpColor: 'rgb(38,166,91)'
+        });
+
+        // This gets the live data from Binance (for free, no login!)
+        fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=100')
+            .then(r => r.json())
+            .then(data => {
+                const formatted = data.map(d => ({
+                    time: d[0] / 1000,
+                    open: parseFloat(d[1]),
+                    high: parseFloat(d[2]),
+                    low: parseFloat(d[3]),
+                    close: parseFloat(d[4])
+                }));
+                candleSeries.setData(formatted);
+            });
+            
+        // This makes the chart resize perfectly on your phone!
+        window.addEventListener('resize', () => {
+            chart.applyOptions({ width: window.innerWidth, height: window.innerHeight });
+        });
+    </script>
+</body>
+</html>
