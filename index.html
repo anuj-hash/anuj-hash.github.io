@@ -39,27 +39,17 @@
             wickDownColor: 'rgb(239,83,80)', wickUpColor: 'rgb(38,166,91)'
         });
 
-        // THE MAGIC SWITCHER FUNCTION
-        function switchCoin(symbol, buttonClicked) {
-            // Make the clicked button blue, and the others gray
-            const buttons = document.querySelectorAll('.menu button');
-            buttons.forEach(btn => btn.classList.remove('active');
-                btn.classList.add('active'); // Wait, fixing a typo in the logic for the user
-            }
-        });
-        */
-       
         // The Magic Switcher Function
         function switchCoin(symbol, buttonClicked) {
-            // Make all buttons look un-selected
+            // 1. Make all buttons look un-selected
             const buttons = document.querySelectorAll('.menu button');
             buttons.forEach(btn => btn.classList.remove('active'));
             
-            // Make the clicked button look selected (blue)
+            // 2. Make the clicked button look selected (blue)
             buttonClicked.classList.add('active');
 
-            // Go to Binance and get the new data
-            fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1h&limit=100`)
+            // 3. Go to Binance and get the new data
+            fetch('https://api.binance.com/api/v3/klines?symbol=' + symbol + '&interval=1h&limit=100')
                 .then(r => r.json())
                 .then(data => {
                     const formatted = data.map(d => ({
