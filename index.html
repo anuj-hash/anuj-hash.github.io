@@ -4,20 +4,32 @@
     <title>My Fast Trading App</title>
     <style>
         body { margin: 0; padding: 0; background: #131722; font-family: Arial, sans-serif; }
-        .menu { background: #1e222d; padding: 10px; display: flex; gap: 10px; }
-        .menu button { background: #2B2B43; color: #d1d4dc; border: 1px solid #363a4e; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; }
-        .menu button:hover { background: #363a4e; }
-        .menu button.active { background: #2962ff; color: white; border-color: #2962ff; }
-        #chart { width: 100vw; height: calc(100vh - 50px); }
+        .top-bar { background: #1e222d; padding: 10px; color: #d1d4dc; font-size: 18px; font-weight: bold; }
+        .menu { background: #1e222d; padding: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .menu button, .tf-menu button { background: #2B2B43; color: #d1d4dc; border: 1px solid #363a4e; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .menu button:hover, .tf-menu button:hover { background: #363a4e; }
+        .menu button.active, .tf-menu button.active { background: #2962ff; color: white; border-color: #2962ff; }
+        .tf-menu { background: #1e222d; padding: 10px; display: flex; gap: 10px; }
+        #chart { width: 100vw; height: calc(100vh - 130px); }
     </style>
 </head>
 <body>
-    <!-- This is our Remote Control! -->
+    <!-- Live Price Tag -->
+    <div class="top-bar">Bitcoin: <span id="livePrice" style="color: #26a65b;">Loading...</span></div>
+
+    <!-- Coin Buttons -->
     <div class="menu">
         <button class="active" onclick="switchCoin('BTCUSDT', this)">Bitcoin</button>
         <button onclick="switchCoin('ETHUSDT', this)">Ethereum</button>
         <button onclick="switchCoin('SOLUSDT', this)">Solana</button>
-        <button onclick="switchCoin('DOGEUSDT', this)">Dogecoin</button>
+    </div>
+
+    <!-- Timeframe Buttons -->
+    <div class="tf-menu">
+        <button onclick="switchTimeframe('1m', this)">1 Min</button>
+        <button onclick="switchTimeframe('15m', this)">15 Min</button>
+        <button class="active" onclick="switchTimeframe('1h', this)">1 Hour</button>
+        <button onclick="switchTimeframe('1d', this)">1 Day</button>
     </div>
 
     <div id="chart"></div>
@@ -25,31 +37,39 @@
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     
     <script>
-        // This creates the dark chart
+        let currentSymbol = 'BTCUSDT';
+        let currentTimeframe = '1h';
+
         const chart = LightweightCharts.createChart(document.getElementById('chart'), {
             layout: { background: { type: 'solid', color: '#131722' }, textColor: '#d1d4dc' },
             grid: { vertLines: { color: '#2B2B43' }, horzLines: { color: '#2B2B43' } },
             timeScale: { timeVisible: true, secondsVisible: false }
         });
 
-        // This adds the candlesticks
         const candleSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {
             upColor: 'rgb(38,166,91)', downColor: 'rgb(239,83,80)',
             borderDownColor: 'rgb(239,83,80)', borderUpColor: 'rgb(38,166,91)',
             wickDownColor: 'rgb(239,83,80)', wickUpColor: 'rgb(38,166,91)'
         });
 
-        // The Magic Switcher Function
         function switchCoin(symbol, buttonClicked) {
-            // 1. Make all buttons look un-selected
             const buttons = document.querySelectorAll('.menu button');
             buttons.forEach(btn => btn.classList.remove('active'));
-            
-            // 2. Make the clicked button look selected (blue)
             buttonClicked.classList.add('active');
+            currentSymbol = symbol;
+            updateChart();
+        }
 
-            // 3. Go to Binance and get the new data
-            fetch('https://api.binance.com/api/v3/klines?symbol=' + symbol + '&interval=1h&limit=100')
+        function switchTimeframe(timeframe, buttonClicked) {
+            const buttons = document.querySelectorAll('.tf-menu button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            buttonClicked.classList.add('active');
+            currentTimeframe = timeframe;
+            updateChart();
+        }
+
+        function updateChart() {
+            fetch('https://api.binance.com/api/v3/klines?symbol=' + currentSymbol + '&interval=' + currentTimeframe + '&limit=100')
                 .then(r => r.json())
                 .then(data => {
                     const formatted = data.map(d => ({
@@ -59,19 +79,20 @@
                         low: parseFloat(d[3]),
                         close: parseFloat(d[4])
                     }));
-                    // Put the new data into the chart!
                     candleSeries.setData(formatted);
-                    // Zoom to fit the screen nicely
                     chart.timeScale().fitContent();
+                    
+                    // Update the Live Price Tag with the very last close price
+                    const latestPrice = formatted[formatted.length - 1].close;
+                    document.getElementById('livePrice').innerText = latestPrice;
                 });
         }
 
-        // Load Bitcoin first when the page opens
-        switchCoin('BTCUSDT', document.querySelector('.menu button'));
+        // Load Bitcoin first
+        updateChart();
             
-        // Resize chart if the screen changes
         window.addEventListener('resize', () => {
-            chart.applyOptions({ width: window.innerWidth, height: window.innerHeight - 50 });
+            chart.applyOptions({ width: window.innerWidth, height: window.innerHeight - 130 });
         });
     </script>
 </body>
