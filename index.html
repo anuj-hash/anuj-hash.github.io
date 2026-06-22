@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Ludo 8 Players Online</title>
 
-<!-- CSS FILE LINK (IMPORTANT) -->
+<!-- CSS -->
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -13,18 +14,21 @@
 
 <div class="container">
 
+<!-- TITLE -->
 <h1 class="title">🎲 Ludo 8 Players Online</h1>
 
 <!-- HOME SCREEN -->
 <div id="home" class="card">
 
-<input id="playerName" placeholder="Enter Your Name" />
+<h2>Join or Create Room</h2>
+
+<input id="playerName" placeholder="Enter Your Name">
 
 <button class="primary" onclick="createRoom()">
 Create Room
 </button>
 
-<input id="roomCode" placeholder="Enter Room Code" />
+<input id="roomCode" placeholder="Enter Room Code">
 
 <button class="secondary" onclick="joinRoom()">
 Join Room
@@ -41,16 +45,21 @@ Join Room
 Room Code: <span id="roomText">---</span>
 </div>
 
+</div>
+
+<!-- PLAYERS -->
+<div class="card">
+
 <div class="players">
 
-<div class="player red">Player 1</div>
-<div class="player blue">Player 2</div>
-<div class="player green">Player 3</div>
-<div class="player yellow">Player 4</div>
-<div class="player purple">Player 5</div>
-<div class="player orange">Player 6</div>
-<div class="player pink">Player 7</div>
-<div class="player cyan">Player 8</div>
+<div class="player red">Red</div>
+<div class="player blue">Blue</div>
+<div class="player green">Green</div>
+<div class="player yellow">Yellow</div>
+<div class="player purple">Purple</div>
+<div class="player orange">Orange</div>
+<div class="player pink">Pink</div>
+<div class="player cyan">Cyan</div>
 
 </div>
 
@@ -59,7 +68,7 @@ Room Code: <span id="roomText">---</span>
 <!-- DICE -->
 <div class="card">
 
-<div class="turn">Current Turn</div>
+<div class="turn">Roll Dice</div>
 
 <div class="dice" id="dice">🎲</div>
 
@@ -80,61 +89,8 @@ Roll Dice
 
 </div>
 
-<script>
-// CREATE BOARD CELLS (15x15 = 225)
-const board = document.getElementById("board");
-
-for (let i = 0; i < 225; i++) {
-const cell = document.createElement("div");
-cell.className = "cell";
-board.appendChild(cell);
-}
-
-// RANDOM ROOM CODE
-function generateCode() {
-return Math.random().toString(36).substring(2, 8).toUpperCase();
-}
-
-// CREATE ROOM
-function createRoom() {
-const name = document.getElementById("playerName").value;
-
-if (!name) {
-alert("Enter your name");
-return;
-}
-
-const room = generateCode();
-
-startGame(room);
-}
-
-// JOIN ROOM
-function joinRoom() {
-const room = document.getElementById("roomCode").value;
-
-if (!room) {
-alert("Enter room code");
-return;
-}
-
-startGame(room);
-}
-
-// START GAME SCREEN
-function startGame(room) {
-document.getElementById("home").classList.add("hidden");
-document.getElementById("game").classList.remove("hidden");
-
-document.getElementById("roomText").innerText = room;
-}
-
-// DICE ROLL
-function rollDice() {
-const num = Math.floor(Math.random() * 6) + 1;
-document.getElementById("dice").innerText = num;
-}
-</script>
+<!-- JS -->
+<script src="script.js"></script>
 
 </body>
 </html>
