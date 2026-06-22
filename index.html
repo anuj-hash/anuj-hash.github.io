@@ -1,247 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ludo 8 Players Online</title>
 
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial;
-}
-
-body{
-background:#111827;
-color:white;
-min-height:100vh;
-}
-
-.container{
-max-width:1200px;
-margin:auto;
-padding:20px;
-}
-
-.title{
-text-align:center;
-font-size:38px;
-margin-bottom:20px;
-}
-
-.card{
-background:#1f2937;
-padding:20px;
-border-radius:20px;
-margin-bottom:20px;
-}
-
-input{
-width:100%;
-padding:15px;
-border:none;
-border-radius:10px;
-margin-top:10px;
-}
-
-button{
-width:100%;
-padding:15px;
-border:none;
-border-radius:10px;
-margin-top:10px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.primary{
-background:#22c55e;
-}
-
-.secondary{
-background:#3b82f6;
-color:white;
-}
-
-.board{
-
-width:100%;
-aspect-ratio:1;
-
-background:
-
-linear-gradient(
-45deg,
-#1e3a8a,
-#172554
-);
-
-border-radius:20px;
-
-display:grid;
-
-grid-template-columns:
-repeat(15,1fr);
-
-grid-template-rows:
-repeat(15,1fr);
-
-gap:2px;
-
-padding:10px;
-
-}
-
-.cell{
-background:#ffffff10;
-border-radius:4px;
-}
-
-.players{
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(120px,1fr));
-gap:10px;
-}
-
-.player{
-padding:10px;
-border-radius:10px;
-text-align:center;
-}
-
-.red{background:red}
-.blue{background:blue}
-.green{background:green}
-.yellow{background:#eab308}
-.purple{background:purple}
-.orange{background:orange}
-.pink{background:deeppink}
-.cyan{background:teal}
-
-.hidden{
-display:none;
-}
-
-.dice{
-font-size:70px;
-text-align:center;
-}
-
-.turn{
-font-size:20px;
-text-align:center;
-margin-bottom:20px;
-}
-
-</style>
-
+<!-- CSS FILE LINK (IMPORTANT) -->
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="container">
 
-<div id="home">
+<h1 class="title">🎲 Ludo 8 Players Online</h1>
 
-<h1 class="title">
-🎲 Ludo 8 Online
-</h1>
+<!-- HOME SCREEN -->
+<div id="home" class="card">
 
-<div class="card">
+<input id="playerName" placeholder="Enter Your Name" />
 
-<input
-id="playerName"
-placeholder="Enter Name"
-/>
-
-<button
-class="primary"
-onclick="createRoom()">
+<button class="primary" onclick="createRoom()">
 Create Room
 </button>
 
-<input
-id="roomCode"
-placeholder="Room Code"
-/>
+<input id="roomCode" placeholder="Enter Room Code" />
 
-<button
-class="secondary"
-onclick="joinRoom()">
+<button class="secondary" onclick="joinRoom()">
 Join Room
 </button>
 
 </div>
 
-</div>
-
-<div
-id="game"
-class="hidden">
+<!-- GAME SCREEN -->
+<div id="game" class="hidden">
 
 <div class="card">
 
 <div class="turn">
-
-Room:
-<span id="roomText">
--
-</span>
-
+Room Code: <span id="roomText">---</span>
 </div>
 
 <div class="players">
 
-<div class="player red">P1</div>
-<div class="player blue">P2</div>
-<div class="player green">P3</div>
-<div class="player yellow">P4</div>
-<div class="player purple">P5</div>
-<div class="player orange">P6</div>
-<div class="player pink">P7</div>
-<div class="player cyan">P8</div>
+<div class="player red">Player 1</div>
+<div class="player blue">Player 2</div>
+<div class="player green">Player 3</div>
+<div class="player yellow">Player 4</div>
+<div class="player purple">Player 5</div>
+<div class="player orange">Player 6</div>
+<div class="player pink">Player 7</div>
+<div class="player cyan">Player 8</div>
 
 </div>
 
 </div>
 
+<!-- DICE -->
 <div class="card">
 
-<div class="turn">
+<div class="turn">Current Turn</div>
 
-Current Turn
+<div class="dice" id="dice">🎲</div>
 
-</div>
-
-<div
-class="dice"
-id="dice">
-
-🎲
-
-</div>
-
-<button
-class="primary"
-onclick="rollDice()">
-
+<button class="primary" onclick="rollDice()">
 Roll Dice
-
 </button>
 
 </div>
 
+<!-- BOARD -->
 <div class="card">
 
-<div class="board"
-id="board">
-
-</div>
+<div class="board" id="board"></div>
 
 </div>
 
@@ -250,150 +81,59 @@ id="board">
 </div>
 
 <script>
+// CREATE BOARD CELLS (15x15 = 225)
+const board = document.getElementById("board");
 
-const board =
-document.getElementById(
-"board"
-)
-
-for(
-let i=0;
-i<225;
-i++
-){
-
-const cell=
-document.createElement(
-"div"
-)
-
-cell.className=
-"cell"
-
-board.appendChild(
-cell
-)
-
+for (let i = 0; i < 225; i++) {
+const cell = document.createElement("div");
+cell.className = "cell";
+board.appendChild(cell);
 }
 
-function code(){
-
-return Math
-.random()
-.toString(36)
-.substring(
-2,
-8
-)
-.toUpperCase()
-
+// RANDOM ROOM CODE
+function generateCode() {
+return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
-function createRoom(){
+// CREATE ROOM
+function createRoom() {
+const name = document.getElementById("playerName").value;
 
-const name=
-document
-.getElementById(
-"playerName"
-)
-.value
-
-if(
-!name
-){
-alert(
-"Enter name"
-)
-return
+if (!name) {
+alert("Enter your name");
+return;
 }
 
-const room=
-code()
+const room = generateCode();
 
-localStorage
-.setItem(
-"room",
-room
-)
-
-start(
-room
-)
-
+startGame(room);
 }
 
-function joinRoom(){
+// JOIN ROOM
+function joinRoom() {
+const room = document.getElementById("roomCode").value;
 
-const room=
-document
-.getElementById(
-"roomCode"
-)
-.value
-
-if(
-!room
-){
-alert(
-"Enter room"
-)
-return
+if (!room) {
+alert("Enter room code");
+return;
 }
 
-start(
-room
-)
-
+startGame(room);
 }
 
-function start(
-room
-){
+// START GAME SCREEN
+function startGame(room) {
+document.getElementById("home").classList.add("hidden");
+document.getElementById("game").classList.remove("hidden");
 
-document
-.getElementById(
-"home"
-)
-.classList
-.add(
-"hidden"
-)
-
-document
-.getElementById(
-"game"
-)
-.classList
-.remove(
-"hidden"
-)
-
-document
-.getElementById(
-"roomText"
-)
-.innerText=
-room
-
+document.getElementById("roomText").innerText = room;
 }
 
-function rollDice(){
-
-const n=
-Math
-.floor(
-Math.random()*6
-)+1
-
-document
-.getElementById(
-"dice"
-)
-.innerHTML=
-n
-
+// DICE ROLL
+function rollDice() {
+const num = Math.floor(Math.random() * 6) + 1;
+document.getElementById("dice").innerText = num;
 }
-
 </script>
 
 </body>
