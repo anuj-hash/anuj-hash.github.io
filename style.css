@@ -1,49 +1,77 @@
 body {
   margin: 0;
+  background: #0b1220;
   font-family: Arial;
-  background: #111827;
   color: white;
   text-align: center;
 }
 
 .title {
   margin: 10px;
+  font-size: 24px;
 }
 
+/* GAME WRAPPER */
 .game {
   display: flex;
   justify-content: center;
-  gap: 20px;
   flex-wrap: wrap;
+  gap: 20px;
 }
 
-.info {
-  width: 150px;
-}
-
-button {
-  padding: 10px;
-  width: 100%;
-  border: none;
-  background: #22c55e;
-  color: white;
-  font-weight: bold;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
+/* BOARD */
 .board {
-  width: 450px;
-  height: 450px;
+  width: 480px;
+  height: 480px;
   display: grid;
   grid-template-columns: repeat(15, 1fr);
   grid-template-rows: repeat(15, 1fr);
+  border: 5px solid white;
   background: white;
-  border: 5px solid black;
 }
 
+/* BASIC CELL */
 .cell {
-  border: 1px solid #ddd;
+  border: 0.5px solid #ddd;
+  position: relative;
+}
+
+/* HOME AREAS (LUDO KING STYLE) */
+.red-home {
+  background: #ef4444;
+}
+
+.green-home {
+  background: #22c55e;
+}
+
+.yellow-home {
+  background: #eab308;
+}
+
+.blue-home {
+  background: #3b82f6;
+}
+
+/* SAFE PATH */
+.path {
+  background: #f3f4f6;
+}
+
+/* CENTER HOME */
+.center {
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* TOKENS */
+.token {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin: auto;
 }
 
 .red { background: #ef4444; }
@@ -51,9 +79,17 @@ button {
 .yellow { background: #eab308; }
 .blue { background: #3b82f6; }
 
-.token {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin: auto;
+/* INFO PANEL */
+.info {
+  width: 150px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: #22c55e;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
 }
