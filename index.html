@@ -4,9 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Ludo 8 Players Online</title>
+<title>8 Player Online Ludo</title>
 
-<!-- CSS -->
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -14,21 +13,20 @@
 
 <div class="container">
 
-<!-- TITLE -->
-<h1 class="title">🎲 Ludo 8 Players Online</h1>
+<h1 class="title">🎲 8 Player Online Ludo</h1>
 
 <!-- HOME SCREEN -->
 <div id="home" class="card">
 
-<h2>Join or Create Room</h2>
+<h2>Create or Join Room</h2>
 
-<input id="playerName" placeholder="Enter Your Name">
+<input id="playerName" placeholder="Enter Your Name" />
 
 <button class="primary" onclick="createRoom()">
 Create Room
 </button>
 
-<input id="roomCode" placeholder="Enter Room Code">
+<input id="roomCode" placeholder="Enter Room Code" />
 
 <button class="secondary" onclick="joinRoom()">
 Join Room
@@ -50,6 +48,8 @@ Room Code: <span id="roomText">---</span>
 <!-- PLAYERS -->
 <div class="card">
 
+<h3>Players</h3>
+
 <div class="players">
 
 <div class="player red">Red</div>
@@ -68,7 +68,7 @@ Room Code: <span id="roomText">---</span>
 <!-- DICE -->
 <div class="card">
 
-<div class="turn">Roll Dice</div>
+<div class="turn">Current Dice</div>
 
 <div class="dice" id="dice">🎲</div>
 
@@ -89,8 +89,8 @@ Roll Dice
 
 </div>
 
-<!-- JS -->
-<script src="script.js"></script>
+<!-- JS (IMPORTANT: module for Firebase) -->
+<script type="module" src="script.js"></script>
 
 </body>
 </html>
