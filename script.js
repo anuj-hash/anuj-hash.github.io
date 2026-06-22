@@ -1,208 +1,104 @@
-import { db } from "./firebase-config.js";
-import {
-  ref,
-  set,
-  get,
-  onValue,
-  update
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-/* =========================
-   GAME STATE
-========================= */
-let roomId = "";
-let playerName = "";
-let players = [];
-
-let dice = 0;
-let turn = 0;
-
-/* 4 tokens per player (-1 = home) */
-let tokens = {};
-
-/* =========================
-   LUDO MAIN PATH (52 cells)
-========================= */
-const PATH_LENGTH = 52;
-
-/* Each player start offset */
-const START_POS = [0, 13, 26, 39];
-
-/* =========================
-   CREATE BOARD UI (visual only)
-========================= */
 const board = document.getElementById("board");
+const diceEl = document.getElementById("dice");
+const turnEl = document.getElementById("turn");
 
-for (let i = 0; i < PATH_LENGTH; i++) {
+/* ======================
+   GAME SETUP
+====================== */
+
+const colors = ["red","green","yellow","blue"];
+let currentTurn = 0;
+let dice = 0;
+
+/* MAIN PATH (52 steps) */
+const path = Array(52).fill(0);
+
+/* TOKENS */
+let tokens = {
+  red: [-1,-1,-1,-1],
+  green: [-1,-1,-1,-1],
+  yellow: [-1,-1,-1,-1],
+  blue: [-1,-1,-1,-1]
+};
+
+/* START POSITIONS */
+const startPos = {
+  red: 0,
+  green: 13,
+  yellow: 26,
+  blue: 39
+};
+
+/* ======================
+   BUILD BOARD
+====================== */
+for (let i = 0; i < 225; i++) {
   const cell = document.createElement("div");
-  cell.className = "cell";
-  cell.setAttribute("data-index", i);
+  cell.classList.add("cell");
+  cell.dataset.index = i;
   board.appendChild(cell);
 }
 
-/* =========================
-   ROOM GENERATION
-========================= */
-function generateRoom() {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
-}
+/* ======================
+   DICE ROLL
+====================== */
+window.rollDice = function () {
+  dice = Math.floor(Math.random() * 6) + 1;
+  diceEl.innerText = dice;
 
-/* =========================
-   CREATE ROOM
-========================= */
-window.createRoom = async function () {
-  playerName = document.getElementById("playerName").value;
-  if (!playerName) return alert("Enter name");
-
-  roomId = generateRoom();
-
-  players = [playerName];
-
-  tokens[playerName] = [-1, -1, -1, -1];
-
-  await set(ref(db, "rooms/" + roomId), {
-    players,
-    turn: 0,
-    dice: 0,
-    tokens
-  });
-
-  enterGame();
+  alert("Click board to move token");
 };
 
-/* =========================
-   JOIN ROOM
-========================= */
-window.joinRoom = async function () {
-  playerName = document.getElementById("playerName").value;
-  roomId = document.getElementById("roomCode").value;
-
-  if (!playerName || !roomId) return alert("Fill fields");
-
-  const snap = await get(ref(db, "rooms/" + roomId));
-  if (!snap.exists()) return alert("Room not found");
-
-  const data = snap.val();
-
-  players = data.players || [];
-  tokens = data.tokens || {};
-
-  if (!players.includes(playerName)) {
-    players.push(playerName);
-  }
-
-  tokens[playerName] = [-1, -1, -1, -1];
-
-  await update(ref(db, "rooms/" + roomId), {
-    players,
-    tokens
-  });
-
-  enterGame();
-};
-
-/* =========================
-   ENTER GAME
-========================= */
-function enterGame() {
-  document.getElementById("home").classList.add("hidden");
-  document.getElementById("game").classList.remove("hidden");
-
-  document.getElementById("roomText").innerText = roomId;
-
-  listenRoom();
-}
-
-/* =========================
-   REALTIME LISTENER
-========================= */
-function listenRoom() {
-  onValue(ref(db, "rooms/" + roomId), (snap) => {
-    const data = snap.val();
-    if (!data) return;
-
-    players = data.players || [];
-    tokens = data.tokens || {};
-    dice = data.dice || 0;
-    turn = data.turn || 0;
-
-    document.getElementById("dice").innerText = dice || "🎲";
-
-    renderTokens();
-  });
-}
-
-/* =========================
-   ROLL DICE
-========================= */
-window.rollDice = async function () {
-  const currentPlayer = players[turn];
-
-  if (playerName !== currentPlayer) {
-    alert("Not your turn");
-    return;
-  }
-
-  const value = Math.floor(Math.random() * 6) + 1;
-
-  await update(ref(db, "rooms/" + roomId), {
-    dice: value
-  });
-};
-
-/* =========================
-   MOVE TOKEN (click board)
-========================= */
-board.addEventListener("click", async (e) => {
+/* ======================
+   MOVE TOKEN ON CLICK
+====================== */
+board.addEventListener("click", (e) => {
   if (!dice) return;
 
-  const currentPlayer = players[turn];
-  if (playerName !== currentPlayer) return;
+  const color = colors[currentTurn];
 
-  let t = tokens[playerName];
+  let t = tokens[color];
 
-  /* find first movable token */
   for (let i = 0; i < 4; i++) {
     if (t[i] === -1) {
-      t[i] = START_POS[players.indexOf(playerName)];
+      t[i] = startPos[color];
       break;
     } else {
       t[i] += dice;
 
-      if (t[i] > PATH_LENGTH - 1) {
-        t[i] = PATH_LENGTH - 1;
-      }
+      if (t[i] > 51) t[i] = 51;
       break;
     }
   }
 
-  tokens[playerName] = t;
+  tokens[color] = t;
 
-  await update(ref(db, "rooms/" + roomId), {
-    tokens,
-    turn: (turn + 1) % players.length,
-    dice: 0
-  });
+  render();
+
+  nextTurn();
 });
 
-/* =========================
+/* ======================
+   NEXT TURN
+====================== */
+function nextTurn() {
+  currentTurn = (currentTurn + 1) % 4;
+  turnEl.innerText = "Turn: " + colors[currentTurn];
+  dice = 0;
+}
+
+/* ======================
    RENDER TOKENS
-========================= */
-function renderTokens() {
+====================== */
+function render() {
   document.querySelectorAll(".cell").forEach(c => c.innerHTML = "");
 
-  const colors = ["red","blue","green","yellow","purple","orange","pink","cyan"];
-
-  players.forEach((p, pi) => {
-    tokens[p]?.forEach(pos => {
-      if (pos >= 0 && pos < PATH_LENGTH) {
+  colors.forEach(color => {
+    tokens[color].forEach(pos => {
+      if (pos >= 0) {
         const token = document.createElement("div");
-        token.style.width = "10px";
-        token.style.height = "10px";
-        token.style.borderRadius = "50%";
-        token.style.background = colors[pi % colors.length];
-        token.style.display = "inline-block";
-        token.style.margin = "1px";
+        token.classList.add("token");
+        token.classList.add(color);
 
         document.querySelector(`[data-index="${pos}"]`)?.appendChild(token);
       }
