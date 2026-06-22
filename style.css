@@ -1,95 +1,58 @@
 body {
   margin: 0;
-  background: #0b1220;
+  background: #0f172a;
   font-family: Arial;
   color: white;
   text-align: center;
 }
 
-.title {
-  margin: 10px;
-  font-size: 24px;
+.top {
+  padding: 10px;
 }
 
-/* GAME WRAPPER */
-.game {
+.panel {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
+  gap: 10px;
+  align-items: center;
 }
 
-/* BOARD */
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #22c55e;
+  color: white;
+  font-weight: bold;
+}
+
 .board {
-  width: 480px;
-  height: 480px;
+  width: 95vw;
+  max-width: 520px;
+  aspect-ratio: 1;
+  margin: auto;
   display: grid;
   grid-template-columns: repeat(15, 1fr);
   grid-template-rows: repeat(15, 1fr);
-  border: 5px solid white;
   background: white;
+  border: 4px solid black;
 }
 
-/* BASIC CELL */
+/* zones */
 .cell {
-  border: 0.5px solid #ddd;
-  position: relative;
+  border: 0.5px solid #eee;
 }
 
-/* HOME AREAS (LUDO KING STYLE) */
-.red-home {
-  background: #ef4444;
-}
-
-.green-home {
-  background: #22c55e;
-}
-
-.yellow-home {
-  background: #eab308;
-}
-
-.blue-home {
-  background: #3b82f6;
-}
-
-/* SAFE PATH */
-.path {
-  background: #f3f4f6;
-}
-
-/* CENTER HOME */
-.center {
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* TOKENS */
-.token {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin: auto;
-}
-
+/* colors */
 .red { background: #ef4444; }
 .green { background: #22c55e; }
 .yellow { background: #eab308; }
 .blue { background: #3b82f6; }
 
-/* INFO PANEL */
-.info {
-  width: 150px;
-}
-
-button {
-  width: 100%;
-  padding: 10px;
-  background: #22c55e;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-weight: bold;
+/* token */
+.token {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin: auto;
 }
