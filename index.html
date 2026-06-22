@@ -23,8 +23,8 @@
             timeScale: { timeVisible: true, secondsVisible: false }
         });
 
-        // This adds the green and red candles
-        const candleSeries = chart.addCandlestickSeries({
+        // This adds the green and red candles (NEW Version 4 way!)
+        const candleSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {
             upColor: 'rgb(38,166,91)', downColor: 'rgb(239,83,80)',
             borderDownColor: 'rgb(239,83,80)', borderUpColor: 'rgb(38,166,91)',
             wickDownColor: 'rgb(239,83,80)', wickUpColor: 'rgb(38,166,91)'
