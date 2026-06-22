@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Online Ludo 8 Players</title>
+<title>Real Online Ludo</title>
 
 <link rel="stylesheet" href="style.css">
 </head>
@@ -13,20 +13,21 @@
 
 <div class="container">
 
-<h1 class="title">🎲 Online Ludo (8 Players)</h1>
+<!-- TITLE -->
+<h1 class="title">🎲 Real Online Ludo (8 Players)</h1>
 
 <!-- HOME SCREEN -->
 <div id="home" class="card">
 
-<h3>Enter Details</h3>
+<h3>Enter Name</h3>
 
-<input id="playerName" placeholder="Enter Your Name">
+<input id="playerName" placeholder="Your Name">
 
 <button class="primary" onclick="createRoom()">
 Create Room
 </button>
 
-<input id="roomCode" placeholder="Enter Room Code">
+<input id="roomCode" placeholder="Room Code">
 
 <button class="secondary" onclick="joinRoom()">
 Join Room
@@ -39,7 +40,7 @@ Join Room
 
 <!-- ROOM INFO -->
 <div class="card">
-<h3>Room Code: <span id="roomText">---</span></h3>
+<h3>Room: <span id="roomText">---</span></h3>
 </div>
 
 <!-- PLAYERS -->
@@ -82,13 +83,17 @@ Roll Dice
 
 <div class="board" id="board"></div>
 
-</div>
+<p style="text-align:center;font-size:12px;opacity:0.6;">
+Click board to move token (simplified mode)
+</p>
 
 </div>
 
 </div>
 
-<!-- SCRIPT (IMPORTANT: MODULE FOR FIREBASE) -->
+</div>
+
+<!-- SCRIPT (IMPORTANT) -->
 <script type="module" src="script.js"></script>
 
 </body>
