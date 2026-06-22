@@ -1,100 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Real Online Ludo</title>
-
+<title>Full Ludo Game</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="container">
+<h1 class="title">🎲 FULL LUDO GAME</h1>
 
-<!-- TITLE -->
-<h1 class="title">🎲 Real Online Ludo (8 Players)</h1>
+<div class="game">
 
-<!-- HOME SCREEN -->
-<div id="home" class="card">
+<div class="info">
+<button onclick="rollDice()">Roll Dice</button>
+<h2 id="dice">🎲</h2>
+<h3 id="turn">Turn: Red</h3>
+</div>
 
-<h3>Enter Name</h3>
-
-<input id="playerName" placeholder="Your Name">
-
-<button class="primary" onclick="createRoom()">
-Create Room
-</button>
-
-<input id="roomCode" placeholder="Room Code">
-
-<button class="secondary" onclick="joinRoom()">
-Join Room
-</button>
+<div id="board" class="board"></div>
 
 </div>
 
-<!-- GAME SCREEN -->
-<div id="game" class="hidden">
-
-<!-- ROOM INFO -->
-<div class="card">
-<h3>Room: <span id="roomText">---</span></h3>
-</div>
-
-<!-- PLAYERS -->
-<div class="card">
-
-<h3>Players</h3>
-
-<div class="players">
-
-<div class="player red">Red</div>
-<div class="player blue">Blue</div>
-<div class="player green">Green</div>
-<div class="player yellow">Yellow</div>
-<div class="player purple">Purple</div>
-<div class="player orange">Orange</div>
-<div class="player pink">Pink</div>
-<div class="player cyan">Cyan</div>
-
-</div>
-
-</div>
-
-<!-- DICE -->
-<div class="card">
-
-<h3>Dice</h3>
-
-<div class="dice" id="dice">🎲</div>
-
-<button class="primary" onclick="rollDice()">
-Roll Dice
-</button>
-
-</div>
-
-<!-- BOARD -->
-<div class="card">
-
-<h3>Board</h3>
-
-<div class="board" id="board"></div>
-
-<p style="text-align:center;font-size:12px;opacity:0.6;">
-Click board to move token (simplified mode)
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- SCRIPT (IMPORTANT) -->
-<script type="module" src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
