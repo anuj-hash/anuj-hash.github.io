@@ -1,0 +1,107 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+.title {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: none;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.primary {
+  background: #22c55e;
+  color: white;
+}
+
+.secondary {
+  background: #3b82f6;
+  color: white;
+}
+
+.hidden {
+  display: none;
+}
+
+.players {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.player {
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.red { background: red; }
+.blue { background: blue; }
+.green { background: green; }
+.yellow { background: gold; color: black; }
+.purple { background: purple; }
+.orange { background: orange; }
+.pink { background: hotpink; }
+.cyan { background: teal; }
+
+.board {
+  width: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  grid-template-rows: repeat(15, 1fr);
+  gap: 2px;
+  background: #111827;
+  padding: 10px;
+  border-radius: 15px;
+}
+
+.cell {
+  background: rgba(255,255,255,0.05);
+  border-radius: 3px;
+}
+
+.dice {
+  font-size: 60px;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.turn {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
